@@ -153,9 +153,13 @@ void loop() {
   
   //readTemp(f);
 
-  /*if(f>=100.0){
-     digitalWrite(led_pin,HIGH);
-     }*/
+  if(f >= 80 && pirValue == 1){
+    // loop code for led light
+    digitalWrite(led_pin,HIGH);
+  }
+  if(f <= 80 || pirValue == 0){
+    digitalWrite(led_pin, LOW);
+  }
 
   
   
@@ -217,9 +221,9 @@ void loop() {
   delay(700);
 
   
-  // loop code for led light
+  
 
-  //digitalWrite(led_pin,HIGH);
+  
 
 
 
