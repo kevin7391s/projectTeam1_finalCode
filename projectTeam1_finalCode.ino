@@ -1,3 +1,31 @@
+// global code for the temperature reader
+
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+#include "DHT.h"
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+#define DHTPIN 3     // Digital pin connected to the DHT sensor
+
+#define DHTTYPE DHT11   // DHT 11
+//#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+
+// Connect pin 1 (on the left) of the sensor to +5V
+// NOTE: If using a board with 3.3V logic like an Arduino Due connect pin 1
+// to 3.3V instead of 5V!
+// Connect pin 2 of the sensor to whatever your DHTPIN is
+// Connect pin 4 (on the right) of the sensor to GROUND
+// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
+
+// Initialize DHT sensor.
+// Note that older versions of this library took an optional third parameter to
+// tweak the timings for faster processors.  This parameter is no longer needed
+// as the current DHT reading algorithm adjusts itself to work on faster procs.
+
+DHT dht(DHTPIN, DHTTYPE);
+
 // observe the sensor output status for the Infared sensor
 int ledPin = 13;
 int pirPin = 7;
@@ -32,6 +60,9 @@ byte read_data() {
 }
 
 void start_test() {
+
+  
+  
   //bus down, send start signal
   digitalWrite(DHpin, LOW);
   //delay greater than 18ms, so DHT11 start signal can be detected
@@ -56,9 +87,30 @@ void start_test() {
   digitalWrite(DHpin, HIGH);
 }
 
+/*
+ bool readTemp(float temp)
+{
+     if(temp>=100.0){
+     digitalWrite(led_pin,HIGH);
+     return True;
+     }
+     else{
+      digitalWrite(led_pin, LOW);S
+      return False;
+     }
+}*/
+
 
 void setup() {
   // put your setup code here, to run once:
+
+  // setup code for the temperature reader
+  Serial.begin(9600);
+  Serial.println(F("DHTxx test!"));
+  dht.begin();
+  lcd.begin();
+  lcd.backlight();
+  lcd.clear();
 
   // setup code for the infared sensor
   pinMode(ledPin, OUTPUT);
@@ -71,14 +123,62 @@ void setup() {
   pinMode(DHpin, OUTPUT);
 
   // setup code for led light
-  pinMode(led_pin, OUTPUT);
-  digitalWrite(led_pin, HIGH);
-  delay(1000);
-  digitalWrite(led_pin, LOW);
+  pinMode(13, OUTPUT);
+ 
 }
 
 void loop() {
+Serial.print("hello world");
+
+
+    // loop code for led light
+
+  // digitalWrite(led_pin,HIGH);
   // put your main code here, to run repeatedly:
+
+  // Loop code for the temperature reader
+
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = dht.readTemperature(true);
+  f=f+16;
+  //readTemp(f);
+
+  /*if(f>=100.0){
+     digitalWrite(led_pin,HIGH);
+     }*/
+
+  
+  
+  
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  // Compute heat index in Fahrenheit (the default)
+  float hif = dht.computeHeatIndex(f, h);
+  // Compute heat index in Celsius (isFahreheit = false)
+  float hic = dht.computeHeatIndex(t, h, false);
+ 
+  lcd.setCursor(0,0);
+  lcd.print("Humidity: ");
+  lcd.setCursor(10,0);
+  lcd.print(h);
+  lcd.setCursor(15,0);
+  lcd.print("%");
+ 
+  lcd.setCursor(0,1);
+  lcd.print("Temp: ");
+  lcd.setCursor(6,1);
+  lcd.print(f);
+  lcd.setCursor(11,1);
+  lcd.print("F");
 
   // loop code for the infared sensor
   pirValue = digitalRead(pirPin);
@@ -90,7 +190,7 @@ void loop() {
   Serial.print("PIR value: ");
   Serial.print(pirValue);
   Serial.print('\n');
-  delay(1000);
+  //delay(1000);
 
   // loop code for the temperature sensor
   start_test();
@@ -110,9 +210,11 @@ void loop() {
   Serial.println('C');
   delay(700);
 
+  
   // loop code for led light
 
-  digitalWrite(led_pin,HIGH);
-  delay(500);
+  //digitalWrite(led_pin,HIGH);
+
+
 
 }
