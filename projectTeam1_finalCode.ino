@@ -27,7 +27,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 DHT dht(DHTPIN, DHTTYPE);
 
 // observe the sensor output status for the Infared sensor
-int ledPin = 13;
+int ledPin = 14;
 int pirPin = 7;
 int pirValue;
 int sec = 0;
@@ -61,8 +61,6 @@ byte read_data() {
 
 void start_test() {
 
-  
-  
   //bus down, send start signal
   digitalWrite(DHpin, LOW);
   //delay greater than 18ms, so DHT11 start signal can be detected
@@ -71,7 +69,7 @@ void start_test() {
   //Wait for DHT11 response
   delayMicroseconds(40);
   pinMode(DHpin, INPUT);
-  while (digitalRead(DHpin) == HIGH)
+  if (digitalRead(DHpin) == HIGH)
     ;
   //DHT11 response, pulled the bus 80us
   delayMicroseconds(80);
@@ -128,7 +126,7 @@ void setup() {
 }
 
 void loop() {
-Serial.print("hello world");
+//Serial.print("hello world");
 
 
     // loop code for led light
@@ -145,7 +143,7 @@ Serial.print("hello world");
   float t = dht.readTemperature();
   // Read temperature as Fahrenheit (isFahrenheit = true)
   float f = dht.readTemperature(true);
-  f=f+16;
+  
   //readTemp(f);
 
   /*if(f>=100.0){
@@ -187,12 +185,13 @@ Serial.print("hello world");
   sec += 1;
   Serial.print("Second: ");
   Serial.print(sec);
-  Serial.print("PIR value: ");
+  Serial.print(" PIR value(movement): ");
   Serial.print(pirValue);
   Serial.print('\n');
   //delay(1000);
 
   // loop code for the temperature sensor
+  /*
   start_test();
   Serial.print("Current humdity =");
   //display the humidity-bit integer
@@ -201,13 +200,14 @@ Serial.print("hello world");
   Serial.print('.');
   Serial.print(dat[1], DEC);
   Serial.println('%');
-  Serial.print("Current temperature =");
+  */
+  //Serial.print("Current temperature =");
   //display the temperature of integer bits
-  Serial.print(dat[2], DEC);
-  Serial.print('.');
+  //Serial.print(dat[2], DEC);
+  //Serial.print('.');
   //display the temperature of decimal places
-  Serial.print(dat[3], DEC);
-  Serial.println('C');
+  //Serial.print(dat[3], DEC);
+  //Serial.println('C');
   delay(700);
 
   
