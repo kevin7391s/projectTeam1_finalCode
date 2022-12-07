@@ -143,6 +143,13 @@ void loop() {
   float t = dht.readTemperature();
   // Read temperature as Fahrenheit (isFahrenheit = true)
   float f = dht.readTemperature(true);
+  f = f + 8;
+
+  sec += 1;
+  Serial.print("Loop #:");
+  Serial.print(sec);
+  Serial.print(" Temp: ");
+  Serial.print(f);
   
   //readTemp(f);
 
@@ -182,8 +189,7 @@ void loop() {
   pirValue = digitalRead(pirPin);
   digitalWrite(ledPin, pirValue);
   //Observe the sensor output status
-  sec += 1;
-  Serial.print("Second: ");
+  
   Serial.print(sec);
   Serial.print(" PIR value(movement): ");
   Serial.print(pirValue);
