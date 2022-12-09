@@ -32,6 +32,9 @@ int pirPin = 7;
 int pirValue;
 int sec = 0;
 
+int person_tracker = 0;
+int ppl_count = 0;
+
 // variables for the temperature sensor
 int DHpin = 8;
 byte dat[5];
@@ -152,7 +155,7 @@ void loop() {
   Serial.print(f);
   
   //readTemp(f);
-
+  
   if(f >= 80 && pirValue == 1){
     // loop code for led light
     digitalWrite(led_pin,HIGH);
@@ -161,8 +164,25 @@ void loop() {
     digitalWrite(led_pin, LOW);
   }
 
-  
-  
+  if(pirValue == 1)
+  {
+    person_tracker ++;
+  }
+
+  //int pircount = 0;
+  /*
+  while(pirValue == 1)
+  {
+    pircount++;
+    if(pircount % 5 == 0)
+    {
+      ppl_count += 1;
+    }
+  } */
+
+
+
+
   
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t) || isnan(f)) {
@@ -176,11 +196,11 @@ void loop() {
   float hic = dht.computeHeatIndex(t, h, false);
  
   lcd.setCursor(0,0);
-  lcd.print("Humidity: ");
+  lcd.print("Ppl count: ");
   lcd.setCursor(10,0);
-  lcd.print(h);
+  lcd.print(person_tracker);
   lcd.setCursor(15,0);
-  lcd.print("%");
+  //lcd.print("");
  
   lcd.setCursor(0,1);
   lcd.print("Temp: ");
@@ -218,7 +238,7 @@ void loop() {
   //display the temperature of decimal places
   //Serial.print(dat[3], DEC);
   //Serial.println('C');
-  delay(700);
+  delay(3500);
 
   
   
